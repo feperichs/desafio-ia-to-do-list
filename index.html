@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List Acessível · Organização Pessoal</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .todo-app {
+      max-width: 650px;
+      width: 100%;
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 0 6px 12px rgba(0, 0, 0, 0.08);
+      padding: 2rem 2rem 2.2rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.2rem;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h1::after {
+      content: "📋";
+      font-size: 1.8rem;
+    }
+
+    .subhead {
+      color: #64748b;
+      margin-bottom: 2rem;
+      font-weight: 400;
+      border-left: 4px solid #94a3b8;
+      padding-left: 1rem;
+    }
+
+    /* ===== FORMULÁRIO (ACESSÍVEL) ===== */
+    .task-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .input-group {
+      flex: 2 1 200px;
+      position: relative;
+    }
+
+    .task-input {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 60px;
+      font-size: 1rem;
+      background: #fafbfc;
+      transition: border 0.15s, box-shadow 0.15s;
+    }
+
+    .task-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+      background: white;
+    }
+
+    .priority-select {
+      flex: 1 1 130px;
+      padding: 0.9rem 1.2rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 60px;
+      font-size: 1rem;
+      background: #fafbfc;
+      cursor: pointer;
+      transition: border 0.15s;
+    }
+
+    .priority-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .add-btn {
+      flex: 0 0 auto;
+      background: #1e293b;
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+      border: 1px solid #334155;
+    }
+
+    .add-btn:hover {
+      background: #0f172a;
+    }
+
+    .add-btn:active {
+      transform: scale(0.97);
+    }
+
+    .add-btn:focus-visible {
+      outline: 3px solid #3b82f6;
+      outline-offset: 2px;
+    }
+
+    /* ===== LISTA DE TAREFAS ===== */
+    .todo-list {
+      list-style: none;
+      margin-top: 0.5rem;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 1rem 1.2rem;
+      background: #ffffff;
+      border-radius: 18px;
+      margin-bottom: 0.7rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      border: 1px solid #edf2f7;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    /* Borda esquerda conforme prioridade */
+    .todo-item.priority-high {
+      border-left: 8px solid #ef4444;
+    }
+    .todo-item.priority-medium {
+      border-left: 8px solid #f59e0b;
+    }
+    .todo-item.priority-low {
+      border-left: 8px solid #10b981;
+    }
+
+    /* Checkbox acessível */
+    .todo-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .todo-checkbox:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    .todo-checkbox:checked {
+      background: #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    .todo-checkbox:checked::after {
+      content: "✓";
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .todo-checkbox:focus-visible {
+      outline: 3px solid #2563eb;
+      outline-offset: 2px;
+    }
+
+    /* Texto da tarefa */
+    .task-text {
+      flex: 1;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #0f172a;
+      transition: color 0.2s, text-decoration 0.2s;
+      word-break: break-word;
+    }
+
+    .todo-checkbox:checked ~ .task-text {
+      text-decoration: line-through;
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    /* Badge de prioridade */
+    .priority-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      background: #f1f5f9;
+      color: #1e293b;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .priority-high .priority-badge {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .priority-medium .priority-badge {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .priority-low .priority-badge {
+      background: #d1fae5;
+      color: #047857;
+    }
+
+    /* Botão de remover tarefa */
+    .delete-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      line-height: 1;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+      border-radius: 40px;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .delete-btn:hover {
+      color: #ef4444;
+      background: #fee2e2;
+    }
+
+    .delete-btn:focus-visible {
+      outline: 3px solid #ef4444;
+      outline-offset: 2px;
+    }
+
+    /* ===== RODAPÉ ===== */
+    .list-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 2px dashed #e2e8f0;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .clear-btn {
+      background: none;
+      border: 1px solid #e2e8f0;
+      padding: 0.45rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .clear-btn:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .clear-btn:focus-visible {
+      outline: 3px solid #3b82f6;
+      outline-offset: 2px;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #94a3b8;
+      padding: 2rem;
+      font-style: italic;
+    }
+
+    /* Utilitário para leitores de tela */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    /* Responsivo */
+    @media (max-width: 480px) {
+      .todo-app {
+        padding: 1.5rem;
+      }
+      .task-form {
+        flex-direction: column;
+      }
+      .add-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="todo-app" role="main" aria-labelledby="app-title">
+  <h1 id="app-title">Minhas Tarefas</h1>
+  <div class="subhead">organize · priorize · conclua</div>
+
+  <!-- Formulário com ARIA labels e live region -->
+  <form class="task-form" id="taskForm" aria-label="Adicionar nova tarefa">
+    <div class="input-group">
+      <label for="taskInput" class="sr-only">Descrição da tarefa</label>
+      <input type="text" id="taskInput" class="task-input" placeholder="Escreva uma nova tarefa..." aria-required="true" required>
+    </div>
+    <div>
+      <label for="prioritySelect" class="sr-only">Prioridade</label>
+      <select id="prioritySelect" class="priority-select" aria-label="Selecione a prioridade">
+        <option value="high">Alta</option>
+        <option value="medium" selected>Média</option>
+        <option value="low">Baixa</option>
+      </select>
+    </div>
+    <button type="submit" class="add-btn" aria-label="Adicionar tarefa">Adicionar</button>
+  </form>
+
+  <!-- Status para leitores de tela (live region) -->
+  <div id="ariaLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Lista de tarefas com role list -->
+  <ul class="todo-list" id="todoList" role="list" aria-label="Lista de tarefas">
+    <!-- Itens serão gerados dinamicamente via JavaScript -->
+  </ul>
+
+  <!-- Mensagem de lista vazia (será mostrada/escondida pelo JS) -->
+  <div id="emptyMessage" class="empty-message" role="status">✨ Sua lista está vazia. Adicione uma tarefa!</div>
+
+  <!-- Rodapé com contador e ações -->
+  <div class="list-footer">
+    <span id="taskCounter" aria-live="polite">📌 0 tarefas · 0 concluídas</span>
+    <button class="clear-btn" id="clearCompletedBtn" aria-label="Limpar tarefas concluídas">Limpar concluídas</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    "use strict";
+
+    // ---------- ESTADO E ELEMENTOS DOM ----------
+    const form = document.getElementById('taskForm');
+    const input = document.getElementById('taskInput');
+    const prioritySelect = document.getElementById('prioritySelect');
+    const todoList = document.getElementById('todoList');
+    const emptyMessage = document.getElementById('emptyMessage');
+    const taskCounter = document.getElementById('taskCounter');
+    const clearCompletedBtn = document.getElementById('clearCompletedBtn');
+    const announcer = document.getElementById('ariaLiveAnnouncer');
+
+    // Array de tarefas (cada tarefa: { id, text, priority, completed })
+    let tasks = [];
+
+    // ---------- FUNÇÕES AUXILIARES ----------
+
+    /** Gera um ID único simples */
+    function generateId() {
+      return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    /** Atualiza contador e visibilidade da mensagem de vazio */
+    function updateUIMeta() {
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.completed).length;
+      taskCounter.textContent = `📌 ${total} ${total === 1 ? 'tarefa' : 'tarefas'} · ${completed} concluída${completed !== 1 ? 's' : ''}`;
+
+      if (total === 0) {
+        emptyMessage.style.display = 'block';
+      } else {
+        emptyMessage.style.display = 'none';
+      }
+    }
+
+    /** Renderiza a lista de tarefas a partir do array 'tasks' */
+    function renderTasks() {
+      // Limpa a lista
+      todoList.innerHTML = '';
+
+      if (tasks.length === 0) {
+        updateUIMeta();
+        return;
+      }
+
+      // Para cada tarefa, cria o <li> correspondente
+      tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = `todo-item priority-${task.priority}`;
+        li.setAttribute('role', 'listitem');
+
+        // Checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'todo-checkbox';
+        checkbox.checked = task.completed;
+        checkbox.setAttribute('aria-label', `Marcar "${task.text}" como ${task.completed ? 'não concluída' : 'concluída'}`);
+        checkbox.addEventListener('change', (e) => {
+          task.completed = e.target.checked;
+          // Atualiza o texto riscado via classe CSS (o seletor CSS já cuida do estilo)
+          // Anuncia mudança para leitores de tela
+          announcer.textContent = `Tarefa "${task.text}" ${task.completed ? 'concluída' : 'reaberta'}.`;
+          updateUIMeta();
+        });
+
+        // Texto da tarefa
+        const textSpan = document.createElement('span');
+        textSpan.className = 'task-text';
+        textSpan.textContent = task.text;
+
+        // Badge de prioridade
+        const badge = document.createElement('span');
+        badge.className = 'priority-badge';
+        const priorityMap = { high: 'Alta', medium: 'Média', low: 'Baixa' };
+        badge.textContent = priorityMap[task.priority] || 'Média';
+        badge.setAttribute('aria-label', `Prioridade ${badge.textContent}`);
+
+        // Botão de deletar
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '🗑️';
+        deleteBtn.setAttribute('aria-label', `Excluir tarefa: ${task.text}`);
+        deleteBtn.addEventListener('click', () => {
+          removeTask(task.id);
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(textSpan);
+        li.appendChild(badge);
+        li.appendChild(deleteBtn);
+        todoList.appendChild(li);
+      });
+
+      updateUIMeta();
+    }
+
+    /** Remove uma tarefa pelo ID */
+    function removeTask(id) {
+      const taskToRemove = tasks.find(t => t.id === id);
+      if (!taskToRemove) return;
+
+      tasks = tasks.filter(t => t.id !== id);
+      renderTasks();
+      announcer.textContent = `Tarefa "${taskToRemove.text}" removida.`;
+      input.focus(); // Mantém foco no campo de entrada
+    }
+
+    /** Adiciona nova tarefa */
+    function addTask(text, priority) {
+      if (!text.trim()) return false;
+
+      const newTask = {
+        id: generateId(),
+        text: text.trim(),
+        priority: priority,
+        completed: false
+      };
+
+      tasks.push(newTask);
+      renderTasks();
+      announcer.textContent = `Tarefa "${newTask.text}" adicionada com prioridade ${priority}.`;
+      return true;
+    }
+
+    /** Remove todas as tarefas concluídas */
+    function clearCompleted() {
+      const completedCount = tasks.filter(t => t.completed).length;
+      if (completedCount === 0) {
+        announcer.textContent = 'Nenhuma tarefa concluída para remover.';
+        return;
+      }
+
+      tasks = tasks.filter(t => !t.completed);
+      renderTasks();
+      announcer.textContent = `${completedCount} tarefa(s) concluída(s) removida(s).`;
+    }
+
+    // ---------- INICIALIZAÇÃO COM TAREFAS DE EXEMPLO ----------
+    function initializeWithSampleTasks() {
+      tasks = [
+        { id: generateId(), text: 'Finalizar relatório de vendas', priority: 'high', completed: true },
+        { id: generateId(), text: 'Revisar documentação do projeto', priority: 'medium', completed: false },
+        { id: generateId(), text: 'Organizar arquivos da semana', priority: 'low', completed: false },
+        { id: generateId(), text: 'Agendar reunião de alinhamento', priority: 'medium', completed: false }
+      ];
+      renderTasks();
+      announcer.textContent = 'Lista carregada com 4 tarefas de exemplo.';
+    }
+
+    // ---------- EVENT LISTENERS ----------
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value;
+      const priority = prioritySelect.value;
+      if (addTask(text, priority)) {
+        input.value = '';
+        input.focus();
+      } else {
+        announcer.textContent = 'Por favor, digite uma descrição para a tarefa.';
+        input.focus();
+      }
+    });
+
+    clearCompletedBtn.addEventListener('click', () => {
+      clearCompleted();
+    });
+
+    // Permitir adicionar tarefa com Enter (já é comportamento padrão do submit)
+
+    // ---------- INICIAR APLICAÇÃO ----------
+    initializeWithSampleTasks();
+  })();
+</script>
+</body>
+</html>
