@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>To-Do List Acessível · Organização Pessoal</title>
+  <title>FlowTask · Gestão de Tarefas Moderna</title>
   <style>
     /* ===== RESET & BASE ===== */
     * {
@@ -13,143 +13,294 @@
     }
 
     body {
-      font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-      background: #f4f6f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
-      padding: 1.5rem;
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       line-height: 1.5;
+      color: #1e293b;
     }
 
-    .todo-app {
-      max-width: 650px;
+    /* Container principal com glassmorphism */
+    .app-container {
+      max-width: 1200px;
       width: 100%;
-      background: white;
-      border-radius: 28px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 0 6px 12px rgba(0, 0, 0, 0.08);
-      padding: 2rem 2rem 2.2rem;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.1);
+      padding: 2rem 2rem 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: box-shadow 0.3s ease;
     }
 
     h1 {
-      font-size: 2.2rem;
-      font-weight: 600;
+      font-size: 2.8rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
-      margin-bottom: 0.2rem;
-      color: #1e293b;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.25rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
-    h1::after {
-      content: "📋";
-      font-size: 1.8rem;
+    h1 i {
+      font-size: 2.2rem;
+      background: white;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      color: #667eea;
     }
 
     .subhead {
-      color: #64748b;
+      font-size: 1.1rem;
+      color: #475569;
       margin-bottom: 2rem;
       font-weight: 400;
-      border-left: 4px solid #94a3b8;
-      padding-left: 1rem;
+      border-left: 5px solid #667eea;
+      padding-left: 1.2rem;
     }
 
-    /* ===== FORMULÁRIO (ACESSÍVEL) ===== */
+    /* ===== PAINEL DE ESTATÍSTICAS ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 1.2rem 1rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-align: center;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* ===== FORMULÁRIO (GLASS) ===== */
     .task-form {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.8rem;
       margin-bottom: 2.5rem;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1.5rem;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
     }
 
     .input-group {
       flex: 2 1 200px;
-      position: relative;
     }
 
     .task-input {
       width: 100%;
-      padding: 0.9rem 1.2rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 60px;
+      padding: 1rem 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50px;
       font-size: 1rem;
-      background: #fafbfc;
-      transition: border 0.15s, box-shadow 0.15s;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(5px);
+      transition: all 0.2s;
+      color: #0f172a;
     }
 
     .task-input:focus {
       outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+      border-color: #667eea;
       background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+    }
+
+    .task-input::placeholder {
+      color: #64748b;
+    }
+
+    .datetime-input {
+      padding: 1rem 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(5px);
+      transition: all 0.2s;
+      color: #0f172a;
+      flex: 1 1 200px;
+    }
+
+    .datetime-input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
     }
 
     .priority-select {
-      flex: 1 1 130px;
-      padding: 0.9rem 1.2rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 60px;
+      padding: 1rem 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50px;
       font-size: 1rem;
-      background: #fafbfc;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(5px);
+      transition: all 0.2s;
+      color: #0f172a;
       cursor: pointer;
-      transition: border 0.15s;
+      flex: 1 1 140px;
     }
 
     .priority-select:focus {
       outline: none;
-      border-color: #3b82f6;
+      border-color: #667eea;
+      background: white;
     }
 
     .add-btn {
-      flex: 0 0 auto;
-      background: #1e293b;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      padding: 0.9rem 2rem;
-      border-radius: 60px;
+      padding: 1rem 2.2rem;
+      border-radius: 50px;
       font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
-      border: 1px solid #334155;
+      transition: all 0.2s;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      flex: 0 0 auto;
+      letter-spacing: 0.3px;
     }
 
     .add-btn:hover {
-      background: #0f172a;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
     }
 
     .add-btn:active {
-      transform: scale(0.97);
+      transform: translateY(1px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .add-btn:focus-visible {
-      outline: 3px solid #3b82f6;
-      outline-offset: 2px;
+    /* ===== BARRA DE CONTROLES (BUSCA/ORDENAÇÃO) ===== */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-wrapper {
+      flex: 2 1 250px;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 1.2rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 3rem;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(5px);
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .sort-select {
+      padding: 0.9rem 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(5px);
+      font-size: 0.95rem;
+      cursor: pointer;
+      color: #1e293b;
+      flex: 1 1 180px;
     }
 
     /* ===== LISTA DE TAREFAS ===== */
     .todo-list {
       list-style: none;
-      margin-top: 0.5rem;
+      margin: 1rem 0 2rem;
     }
 
     .todo-item {
       display: flex;
       align-items: center;
-      gap: 0.9rem;
-      padding: 1rem 1.2rem;
-      background: #ffffff;
-      border-radius: 18px;
-      margin-bottom: 0.7rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-      border: 1px solid #edf2f7;
-      transition: background 0.2s, border-color 0.2s;
+      gap: 1rem;
+      padding: 1.2rem 1.5rem;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.2s;
     }
 
-    /* Borda esquerda conforme prioridade */
+    .todo-item:hover {
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    /* Borda esquerda por prioridade */
     .todo-item.priority-high {
       border-left: 8px solid #ef4444;
     }
@@ -160,14 +311,14 @@
       border-left: 8px solid #10b981;
     }
 
-    /* Checkbox acessível */
+    /* Checkbox estilizado */
     .todo-checkbox {
       appearance: none;
       -webkit-appearance: none;
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border: 2px solid #cbd5e1;
-      border-radius: 8px;
+      border-radius: 10px;
       background: white;
       cursor: pointer;
       display: flex;
@@ -178,54 +329,79 @@
     }
 
     .todo-checkbox:hover {
-      border-color: #3b82f6;
-      background: #eff6ff;
+      border-color: #667eea;
+      background: #eef2ff;
     }
 
     .todo-checkbox:checked {
-      background: #3b82f6;
-      border-color: #3b82f6;
+      background: #667eea;
+      border-color: #667eea;
     }
 
     .todo-checkbox:checked::after {
       content: "✓";
       color: white;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
     }
 
-    .todo-checkbox:focus-visible {
-      outline: 3px solid #2563eb;
-      outline-offset: 2px;
+    /* Conteúdo da tarefa */
+    .task-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
     }
 
-    /* Texto da tarefa */
     .task-text {
-      flex: 1;
-      font-size: 1.05rem;
-      font-weight: 500;
+      font-size: 1.1rem;
+      font-weight: 600;
       color: #0f172a;
       transition: color 0.2s, text-decoration 0.2s;
       word-break: break-word;
     }
 
-    .todo-checkbox:checked ~ .task-text {
+    .todo-checkbox:checked ~ .task-content .task-text {
       text-decoration: line-through;
       color: #94a3b8;
-      font-weight: 400;
+      font-weight: 500;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .task-deadline {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .deadline-overdue {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .deadline-today {
+      color: #f59e0b;
     }
 
     /* Badge de prioridade */
     .priority-badge {
       font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.25rem 0.9rem;
+      font-weight: 700;
+      padding: 0.3rem 1rem;
       border-radius: 40px;
       background: #f1f5f9;
       color: #1e293b;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
       flex-shrink: 0;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .priority-high .priority-badge {
@@ -241,7 +417,7 @@
       color: #047857;
     }
 
-    /* Botão de remover tarefa */
+    /* Botão deletar */
     .delete-btn {
       background: none;
       border: none;
@@ -249,10 +425,15 @@
       line-height: 1;
       color: #94a3b8;
       cursor: pointer;
-      padding: 0.2rem 0.4rem;
-      border-radius: 40px;
+      padding: 0.4rem;
+      border-radius: 50%;
       transition: all 0.15s;
       flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .delete-btn:hover {
@@ -260,52 +441,77 @@
       background: #fee2e2;
     }
 
-    .delete-btn:focus-visible {
-      outline: 3px solid #ef4444;
-      outline-offset: 2px;
-    }
-
-    /* ===== RODAPÉ ===== */
-    .list-footer {
+    /* ===== PAGINAÇÃO ===== */
+    .pagination {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 2px dashed #e2e8f0;
-      color: #64748b;
-      font-size: 0.9rem;
+      gap: 0.8rem;
+      margin: 2rem 0 1rem;
     }
 
-    .clear-btn {
-      background: none;
-      border: 1px solid #e2e8f0;
-      padding: 0.45rem 1.2rem;
-      border-radius: 40px;
-      font-size: 0.85rem;
-      color: #64748b;
+    .page-btn {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 20px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      color: #1e293b;
       cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .clear-btn:hover {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-    }
-
-    .clear-btn:focus-visible {
-      outline: 3px solid #3b82f6;
-      outline-offset: 2px;
-    }
-
-    .empty-message {
+      transition: all 0.2s;
+      min-width: 45px;
       text-align: center;
-      color: #94a3b8;
-      padding: 2rem;
-      font-style: italic;
     }
 
-    /* Utilitário para leitores de tela */
+    .page-btn:hover:not(:disabled) {
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .page-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      color: #475569;
+      font-weight: 500;
+      padding: 0 1rem;
+    }
+
+    /* ===== AÇÕES EM LOTE ===== */
+    .batch-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .secondary-btn {
+      background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.5);
+      backdrop-filter: blur(5px);
+      padding: 0.7rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .secondary-btn:hover {
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Utilitários */
     .sr-only {
       position: absolute;
       width: 1px;
@@ -313,238 +519,474 @@
       padding: 0;
       margin: -1px;
       overflow: hidden;
-      clip: rect(0, 0, 0, 0);
+      clip: rect(0,0,0,0);
       white-space: nowrap;
       border-width: 0;
     }
 
+    .empty-message {
+      text-align: center;
+      padding: 3rem;
+      color: #64748b;
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.3);
+      border-radius: 30px;
+      backdrop-filter: blur(5px);
+    }
+
     /* Responsivo */
-    @media (max-width: 480px) {
-      .todo-app {
-        padding: 1.5rem;
-      }
-      .task-form {
-        flex-direction: column;
-      }
-      .add-btn {
-        width: 100%;
-      }
+    @media (max-width: 700px) {
+      body { padding: 1rem; }
+      .app-container { padding: 1.5rem; }
+      h1 { font-size: 2rem; }
+      .task-form { flex-direction: column; }
+      .add-btn { width: 100%; }
+      .controls-bar { flex-direction: column; align-items: stretch; }
     }
   </style>
+  <!-- Fonte Inter opcional (fallback para system) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="todo-app" role="main" aria-labelledby="app-title">
-  <h1 id="app-title">Minhas Tarefas</h1>
-  <div class="subhead">organize · priorize · conclua</div>
+<div class="app-container">
+  <h1>
+    <i>✓</i> FlowTask
+  </h1>
+  <div class="subhead">gerencie suas tarefas com estilo e eficiência</div>
 
-  <!-- Formulário com ARIA labels e live region -->
+  <!-- Painel de estatísticas -->
+  <div class="stats-grid" id="statsPanel">
+    <!-- Preenchido dinamicamente -->
+  </div>
+
+  <!-- Formulário de adição -->
   <form class="task-form" id="taskForm" aria-label="Adicionar nova tarefa">
     <div class="input-group">
-      <label for="taskInput" class="sr-only">Descrição da tarefa</label>
-      <input type="text" id="taskInput" class="task-input" placeholder="Escreva uma nova tarefa..." aria-required="true" required>
+      <label for="taskInput" class="sr-only">Descrição</label>
+      <input type="text" id="taskInput" class="task-input" placeholder="O que precisa ser feito?" required>
     </div>
-    <div>
-      <label for="prioritySelect" class="sr-only">Prioridade</label>
-      <select id="prioritySelect" class="priority-select" aria-label="Selecione a prioridade">
-        <option value="high">Alta</option>
-        <option value="medium" selected>Média</option>
-        <option value="low">Baixa</option>
-      </select>
-    </div>
-    <button type="submit" class="add-btn" aria-label="Adicionar tarefa">Adicionar</button>
+    <input type="datetime-local" id="deadlineInput" class="datetime-input" aria-label="Data e hora de entrega">
+    <select id="prioritySelect" class="priority-select" aria-label="Prioridade">
+      <option value="high">Alta</option>
+      <option value="medium" selected>Média</option>
+      <option value="low">Baixa</option>
+    </select>
+    <button type="submit" class="add-btn">➕ Adicionar</button>
   </form>
 
-  <!-- Status para leitores de tela (live region) -->
-  <div id="ariaLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- Lista de tarefas com role list -->
-  <ul class="todo-list" id="todoList" role="list" aria-label="Lista de tarefas">
-    <!-- Itens serão gerados dinamicamente via JavaScript -->
-  </ul>
-
-  <!-- Mensagem de lista vazia (será mostrada/escondida pelo JS) -->
-  <div id="emptyMessage" class="empty-message" role="status">✨ Sua lista está vazia. Adicione uma tarefa!</div>
-
-  <!-- Rodapé com contador e ações -->
-  <div class="list-footer">
-    <span id="taskCounter" aria-live="polite">📌 0 tarefas · 0 concluídas</span>
-    <button class="clear-btn" id="clearCompletedBtn" aria-label="Limpar tarefas concluídas">Limpar concluídas</button>
+  <!-- Barra de busca e ordenação -->
+  <div class="controls-bar">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="Buscar tarefas..." aria-label="Buscar tarefas">
+    </div>
+    <select id="sortSelect" class="sort-select" aria-label="Ordenar por">
+      <option value="default">📋 Ordenar por</option>
+      <option value="priority-high">Prioridade (Alta primeiro)</option>
+      <option value="priority-low">Prioridade (Baixa primeiro)</option>
+      <option value="deadline-asc">Prazo mais próximo</option>
+      <option value="deadline-desc">Prazo mais distante</option>
+      <option value="completed">Status (Pendentes primeiro)</option>
+    </select>
   </div>
+
+  <!-- Lista de tarefas -->
+  <div id="taskListContainer">
+    <ul class="todo-list" id="todoList" role="list" aria-label="Lista de tarefas"></ul>
+    <div id="emptyMessage" class="empty-message" style="display: none;">✨ Nenhuma tarefa encontrada</div>
+  </div>
+
+  <!-- Paginação -->
+  <div class="pagination" id="paginationContainer"></div>
+
+  <!-- Ações em lote -->
+  <div class="batch-actions">
+    <button class="secondary-btn" id="clearCompletedBtn">🗑️ Limpar concluídas</button>
+  </div>
+
+  <!-- Live region para acessibilidade -->
+  <div id="ariaLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 </div>
 
 <script>
-  (function() {
+  (function(){
     "use strict";
 
-    // ---------- ESTADO E ELEMENTOS DOM ----------
+    // ---------- ESTADO GLOBAL ----------
+    let tasks = [];                          // array de tarefas
+    let filteredTasks = [];                  // após busca/filtro
+    let currentPage = 1;
+    const itemsPerPage = 5;
+    let searchTerm = '';
+    let sortOption = 'default';
+
+    // DOM Elements
     const form = document.getElementById('taskForm');
-    const input = document.getElementById('taskInput');
+    const taskInput = document.getElementById('taskInput');
+    const deadlineInput = document.getElementById('deadlineInput');
     const prioritySelect = document.getElementById('prioritySelect');
-    const todoList = document.getElementById('todoList');
+    const todoListEl = document.getElementById('todoList');
     const emptyMessage = document.getElementById('emptyMessage');
-    const taskCounter = document.getElementById('taskCounter');
+    const statsPanel = document.getElementById('statsPanel');
+    const searchInput = document.getElementById('searchInput');
+    const sortSelect = document.getElementById('sortSelect');
+    const paginationContainer = document.getElementById('paginationContainer');
     const clearCompletedBtn = document.getElementById('clearCompletedBtn');
     const announcer = document.getElementById('ariaLiveAnnouncer');
 
-    // Array de tarefas (cada tarefa: { id, text, priority, completed })
-    let tasks = [];
-
-    // ---------- FUNÇÕES AUXILIARES ----------
-
-    /** Gera um ID único simples */
+    // ---------- FUNÇÕES UTILITÁRIAS ----------
     function generateId() {
       return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     }
 
-    /** Atualiza contador e visibilidade da mensagem de vazio */
-    function updateUIMeta() {
-      const total = tasks.length;
-      const completed = tasks.filter(t => t.completed).length;
-      taskCounter.textContent = `📌 ${total} ${total === 1 ? 'tarefa' : 'tarefas'} · ${completed} concluída${completed !== 1 ? 's' : ''}`;
-
-      if (total === 0) {
-        emptyMessage.style.display = 'block';
-      } else {
-        emptyMessage.style.display = 'none';
-      }
+    // Formata data para exibição amigável
+    function formatDeadline(dateString) {
+      if (!dateString) return null;
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return null;
+      return date;
     }
 
-    /** Renderiza a lista de tarefas a partir do array 'tasks' */
-    function renderTasks() {
-      // Limpa a lista
-      todoList.innerHTML = '';
+    function getDeadlineStatus(date) {
+      if (!date) return { text: 'Sem prazo', class: '' };
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const taskDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const diffTime = taskDate - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays < 0) return { text: 'Atrasada', class: 'deadline-overdue' };
+      if (diffDays === 0) return { text: 'Hoje', class: 'deadline-today' };
+      if (diffDays === 1) return { text: 'Amanhã', class: '' };
+      return { text: `${diffDays} dias`, class: '' };
+    }
 
-      if (tasks.length === 0) {
-        updateUIMeta();
+    // Atualiza estatísticas
+    function updateStats() {
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.completed).length;
+      const pending = total - completed;
+      const overdue = tasks.filter(t => {
+        if (!t.deadline || t.completed) return false;
+        const d = new Date(t.deadline);
+        const now = new Date();
+        return d < now;
+      }).length;
+
+      const stats = [
+        { label: 'Total', value: total, icon: '📊' },
+        { label: 'Concluídas', value: completed, icon: '✅' },
+        { label: 'Pendentes', value: pending, icon: '⏳' },
+        { label: 'Atrasadas', value: overdue, icon: '⚠️' }
+      ];
+
+      statsPanel.innerHTML = stats.map(s => `
+        <div class="stat-card">
+          <div class="stat-value">${s.value}</div>
+          <div class="stat-label">${s.icon} ${s.label}</div>
+        </div>
+      `).join('');
+    }
+
+    // Aplica filtro de busca e ordenação
+    function applyFiltersAndSort() {
+      // Filtro por texto
+      let result = tasks.filter(task => 
+        task.text.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      // Ordenação
+      switch (sortOption) {
+        case 'priority-high':
+          result.sort((a,b) => {
+            const priorityOrder = { high: 1, medium: 2, low: 3 };
+            return priorityOrder[a.priority] - priorityOrder[b.priority];
+          });
+          break;
+        case 'priority-low':
+          result.sort((a,b) => {
+            const priorityOrder = { low: 1, medium: 2, high: 3 };
+            return priorityOrder[a.priority] - priorityOrder[b.priority];
+          });
+          break;
+        case 'deadline-asc':
+          result.sort((a,b) => {
+            if (!a.deadline) return 1;
+            if (!b.deadline) return -1;
+            return new Date(a.deadline) - new Date(b.deadline);
+          });
+          break;
+        case 'deadline-desc':
+          result.sort((a,b) => {
+            if (!a.deadline) return 1;
+            if (!b.deadline) return -1;
+            return new Date(b.deadline) - new Date(a.deadline);
+          });
+          break;
+        case 'completed':
+          result.sort((a,b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1));
+          break;
+        default:
+          // default: ordenar por data de criação (id) decrescente
+          result.sort((a,b) => b.id.localeCompare(a.id));
+      }
+
+      filteredTasks = result;
+    }
+
+    // Renderiza a lista com paginação
+    function renderTasks() {
+      applyFiltersAndSort();
+      
+      const start = (currentPage - 1) * itemsPerPage;
+      const paginatedItems = filteredTasks.slice(start, start + itemsPerPage);
+      
+      if (paginatedItems.length === 0 && filteredTasks.length > 0 && currentPage > 1) {
+        // Se a página atual ficou vazia, volta para a anterior
+        currentPage = Math.max(1, Math.ceil(filteredTasks.length / itemsPerPage));
+        renderTasks();
         return;
       }
 
-      // Para cada tarefa, cria o <li> correspondente
-      tasks.forEach(task => {
-        const li = document.createElement('li');
-        li.className = `todo-item priority-${task.priority}`;
-        li.setAttribute('role', 'listitem');
-
-        // Checkbox
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'todo-checkbox';
-        checkbox.checked = task.completed;
-        checkbox.setAttribute('aria-label', `Marcar "${task.text}" como ${task.completed ? 'não concluída' : 'concluída'}`);
-        checkbox.addEventListener('change', (e) => {
-          task.completed = e.target.checked;
-          // Atualiza o texto riscado via classe CSS (o seletor CSS já cuida do estilo)
-          // Anuncia mudança para leitores de tela
-          announcer.textContent = `Tarefa "${task.text}" ${task.completed ? 'concluída' : 'reaberta'}.`;
-          updateUIMeta();
+      todoListEl.innerHTML = '';
+      
+      if (filteredTasks.length === 0) {
+        emptyMessage.style.display = 'block';
+        todoListEl.style.display = 'none';
+      } else {
+        emptyMessage.style.display = 'none';
+        todoListEl.style.display = 'block';
+        
+        paginatedItems.forEach(task => {
+          const li = document.createElement('li');
+          li.className = `todo-item priority-${task.priority}`;
+          li.setAttribute('role', 'listitem');
+          
+          // Checkbox
+          const chk = document.createElement('input');
+          chk.type = 'checkbox';
+          chk.className = 'todo-checkbox';
+          chk.checked = task.completed;
+          chk.setAttribute('aria-label', `Marcar "${task.text}" como ${task.completed ? 'não concluída' : 'concluída'}`);
+          chk.addEventListener('change', (e) => {
+            task.completed = e.target.checked;
+            announcer.textContent = `Tarefa "${task.text}" ${task.completed ? 'concluída' : 'reaberta'}.`;
+            renderTasks();
+            updateStats();
+          });
+          
+          // Conteúdo
+          const contentDiv = document.createElement('div');
+          contentDiv.className = 'task-content';
+          
+          const textSpan = document.createElement('span');
+          textSpan.className = 'task-text';
+          textSpan.textContent = task.text;
+          
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'task-meta';
+          
+          // Data de criação (apenas informativo)
+          const createdSpan = document.createElement('span');
+          createdSpan.textContent = `📅 ${new Date(task.createdAt).toLocaleDateString('pt-BR')}`;
+          
+          // Deadline
+          const deadlineSpan = document.createElement('span');
+          deadlineSpan.className = 'task-deadline';
+          if (task.deadline) {
+            const deadlineDate = new Date(task.deadline);
+            const status = getDeadlineStatus(deadlineDate);
+            const formatted = deadlineDate.toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+            deadlineSpan.innerHTML = `⏰ ${formatted} <span class="${status.class}">${status.text}</span>`;
+          } else {
+            deadlineSpan.innerHTML = `⏰ Sem prazo`;
+          }
+          
+          metaDiv.appendChild(createdSpan);
+          metaDiv.appendChild(deadlineSpan);
+          
+          contentDiv.appendChild(textSpan);
+          contentDiv.appendChild(metaDiv);
+          
+          // Badge prioridade
+          const badge = document.createElement('span');
+          badge.className = 'priority-badge';
+          const priorityMap = { high: 'Alta', medium: 'Média', low: 'Baixa' };
+          badge.textContent = priorityMap[task.priority];
+          
+          // Botão deletar
+          const delBtn = document.createElement('button');
+          delBtn.className = 'delete-btn';
+          delBtn.innerHTML = '🗑️';
+          delBtn.setAttribute('aria-label', `Excluir tarefa: ${task.text}`);
+          delBtn.addEventListener('click', () => {
+            tasks = tasks.filter(t => t.id !== task.id);
+            announcer.textContent = `Tarefa "${task.text}" removida.`;
+            // Ajusta página se necessário
+            const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+            if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+            renderTasks();
+            updateStats();
+            taskInput.focus();
+          });
+          
+          li.appendChild(chk);
+          li.appendChild(contentDiv);
+          li.appendChild(badge);
+          li.appendChild(delBtn);
+          todoListEl.appendChild(li);
         });
+      }
+      
+      renderPagination();
+      updateStats();
+    }
 
-        // Texto da tarefa
-        const textSpan = document.createElement('span');
-        textSpan.className = 'task-text';
-        textSpan.textContent = task.text;
-
-        // Badge de prioridade
-        const badge = document.createElement('span');
-        badge.className = 'priority-badge';
-        const priorityMap = { high: 'Alta', medium: 'Média', low: 'Baixa' };
-        badge.textContent = priorityMap[task.priority] || 'Média';
-        badge.setAttribute('aria-label', `Prioridade ${badge.textContent}`);
-
-        // Botão de deletar
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.innerHTML = '🗑️';
-        deleteBtn.setAttribute('aria-label', `Excluir tarefa: ${task.text}`);
-        deleteBtn.addEventListener('click', () => {
-          removeTask(task.id);
+    // Renderiza controles de paginação
+    function renderPagination() {
+      const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+      if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+      }
+      
+      let html = '';
+      html += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} data-page="prev">‹</button>`;
+      
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          html += `<span class="page-info">...</span>`;
+        }
+      }
+      
+      html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} data-page="next">›</button>`;
+      paginationContainer.innerHTML = html;
+      
+      // Event listeners
+      paginationContainer.querySelectorAll('[data-page]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const page = e.target.dataset.page;
+          if (page === 'prev') {
+            if (currentPage > 1) currentPage--;
+          } else if (page === 'next') {
+            if (currentPage < totalPages) currentPage++;
+          } else {
+            currentPage = parseInt(page);
+          }
+          renderTasks();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-
-        li.appendChild(checkbox);
-        li.appendChild(textSpan);
-        li.appendChild(badge);
-        li.appendChild(deleteBtn);
-        todoList.appendChild(li);
       });
-
-      updateUIMeta();
     }
 
-    /** Remove uma tarefa pelo ID */
-    function removeTask(id) {
-      const taskToRemove = tasks.find(t => t.id === id);
-      if (!taskToRemove) return;
-
-      tasks = tasks.filter(t => t.id !== id);
-      renderTasks();
-      announcer.textContent = `Tarefa "${taskToRemove.text}" removida.`;
-      input.focus(); // Mantém foco no campo de entrada
-    }
-
-    /** Adiciona nova tarefa */
-    function addTask(text, priority) {
+    // Adiciona nova tarefa
+    function addTask(text, priority, deadline) {
       if (!text.trim()) return false;
-
+      
       const newTask = {
         id: generateId(),
         text: text.trim(),
         priority: priority,
-        completed: false
+        deadline: deadline || null,
+        completed: false,
+        createdAt: new Date().toISOString()
       };
-
+      
       tasks.push(newTask);
+      announcer.textContent = `Tarefa "${newTask.text}" adicionada.`;
+      
+      // Reset para primeira página se busca ativa? Melhor ir para página onde aparece (provavelmente primeira)
+      currentPage = 1;
+      searchTerm = ''; // limpa busca para mostrar nova tarefa
+      searchInput.value = '';
+      sortOption = 'default';
+      sortSelect.value = 'default';
+      
       renderTasks();
-      announcer.textContent = `Tarefa "${newTask.text}" adicionada com prioridade ${priority}.`;
+      updateStats();
       return true;
     }
 
-    /** Remove todas as tarefas concluídas */
+    // Limpa concluídas
     function clearCompleted() {
       const completedCount = tasks.filter(t => t.completed).length;
       if (completedCount === 0) {
         announcer.textContent = 'Nenhuma tarefa concluída para remover.';
         return;
       }
-
       tasks = tasks.filter(t => !t.completed);
-      renderTasks();
       announcer.textContent = `${completedCount} tarefa(s) concluída(s) removida(s).`;
-    }
-
-    // ---------- INICIALIZAÇÃO COM TAREFAS DE EXEMPLO ----------
-    function initializeWithSampleTasks() {
-      tasks = [
-        { id: generateId(), text: 'Finalizar relatório de vendas', priority: 'high', completed: true },
-        { id: generateId(), text: 'Revisar documentação do projeto', priority: 'medium', completed: false },
-        { id: generateId(), text: 'Organizar arquivos da semana', priority: 'low', completed: false },
-        { id: generateId(), text: 'Agendar reunião de alinhamento', priority: 'medium', completed: false }
-      ];
+      
+      // Ajusta página
+      const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+      if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+      
       renderTasks();
-      announcer.textContent = 'Lista carregada com 4 tarefas de exemplo.';
+      updateStats();
     }
 
-    // ---------- EVENT LISTENERS ----------
+    // Inicialização com exemplos
+    function initSampleTasks() {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const nextWeek = new Date(now);
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      const yesterday = new Date(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      tasks = [
+        { id: generateId(), text: 'Finalizar relatório de vendas', priority: 'high', deadline: yesterday.toISOString().slice(0,16), completed: false, createdAt: now.toISOString() },
+        { id: generateId(), text: 'Revisar documentação do projeto', priority: 'medium', deadline: tomorrow.toISOString().slice(0,16), completed: false, createdAt: now.toISOString() },
+        { id: generateId(), text: 'Organizar arquivos da semana', priority: 'low', deadline: null, completed: true, createdAt: now.toISOString() },
+        { id: generateId(), text: 'Agendar reunião de alinhamento', priority: 'medium', deadline: nextWeek.toISOString().slice(0,16), completed: false, createdAt: now.toISOString() },
+        { id: generateId(), text: 'Estudar novas features do CSS', priority: 'low', deadline: null, completed: false, createdAt: now.toISOString() },
+        { id: generateId(), text: 'Preparar apresentação', priority: 'high', deadline: tomorrow.toISOString().slice(0,16), completed: false, createdAt: now.toISOString() },
+        { id: generateId(), text: 'Comprar material de escritório', priority: 'low', deadline: null, completed: false, createdAt: now.toISOString() },
+      ];
+    }
+
+    // Event listeners
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const text = input.value;
+      const text = taskInput.value;
       const priority = prioritySelect.value;
-      if (addTask(text, priority)) {
-        input.value = '';
-        input.focus();
-      } else {
-        announcer.textContent = 'Por favor, digite uma descrição para a tarefa.';
-        input.focus();
+      const deadline = deadlineInput.value;
+      if (addTask(text, priority, deadline)) {
+        taskInput.value = '';
+        deadlineInput.value = '';
+        taskInput.focus();
       }
     });
 
-    clearCompletedBtn.addEventListener('click', () => {
-      clearCompleted();
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value;
+      currentPage = 1;
+      renderTasks();
     });
 
-    // Permitir adicionar tarefa com Enter (já é comportamento padrão do submit)
+    sortSelect.addEventListener('change', (e) => {
+      sortOption = e.target.value;
+      currentPage = 1;
+      renderTasks();
+    });
 
-    // ---------- INICIAR APLICAÇÃO ----------
-    initializeWithSampleTasks();
+    clearCompletedBtn.addEventListener('click', clearCompleted);
+
+    // Inicializa app
+    initSampleTasks();
+    renderTasks();
+    updateStats();
+    
+    // Define data/hora mínima como agora
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    deadlineInput.min = now.toISOString().slice(0,16);
+    
   })();
 </script>
 </body>
